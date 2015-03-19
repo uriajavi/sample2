@@ -9,19 +9,34 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.enterprise.context.Dependent;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Past;
 
 /**
  *
  * @author javi
  */
+@Entity
 @Dependent
+@Table(name="incident",schema="incidentdb")
+@NamedQueries({
+        @NamedQuery(name="findAllIncidents",
+                    query="SELECT i FROM Incident i ORDER BY i.openDate DESC"
+        ),
+        @NamedQuery(name="findIncidentsByState",
+                    query="SELECT i FROM Incident i WHERE i.state = :state")
+})
 public class Incident implements Serializable {
     
     private static final String DEFAULT_DESCRIPTION="Default description";
     private static final String DEFAULT_OPENER="nobody";
-    private Date closeDate;
-    private String closedBy;
-    private String solution;
 
     public static enum State { OPENED_STATE, CLOSED_STATE}
     
@@ -30,6 +45,9 @@ public class Incident implements Serializable {
     private String openedBy;
     private Date openDate;
     private State state;
+    private Date closeDate;
+    private String closedBy;
+    private String solution;
     
     public Incident(String description, String openedBy) {
         this.state=State.OPENED_STATE;
@@ -48,8 +66,9 @@ public class Incident implements Serializable {
     public void setId(Integer id) {
         this.id=id;
     }
-
-    public Object getId() {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    public Integer getId() {
         return this.id;
     }
 
@@ -60,7 +79,8 @@ public class Incident implements Serializable {
     public void setDescription(String description) {
         this.description=description;
     }
-
+    @Temporal(TemporalType.DATE)
+    @Past
     public Date getOpenDate() {
         return this.openDate;
     }
@@ -80,7 +100,8 @@ public class Incident implements Serializable {
     public void setCloseDate(Date closeDate) {
         this.closeDate=closeDate;
     }
-
+    @Temporal(TemporalType.DATE)
+    @Past
     public Date getCloseDate() {
         return this.closeDate;
     }
@@ -108,5 +129,33 @@ public class Incident implements Serializable {
     public String getSolution() {
         return this.solution;
     }
+    
+        
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Incident)) {
+            return false;
+        }
+        Incident other = (Incident) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "incidentmanagement.entity.Incident[ id=" + id + " ]";
+    }
+    
+
     
 }
