@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form id="incidentsForm">
+        <!--replaces h:form because this last tag causes an 
+            UnsupportedOperation exception with JSFUnit&Arquillian test-->
+            <h:panelGroup id="findIncidentsPanel">
+                <h:outputLabel for="findIncidents" value="Show:" id="findIncidentsLabel"/>
+                <h:selectOneMenu id="findIncidents">
+                    <f:selectItem itemValue="All" itemLabel="All"/>
+                    <f:selectItem itemValue="Opened" itemLabel="Opened"/>
+                    <f:selectItem itemValue="Closed" itemLabel="Closed"/>
+                </h:selectOneMenu>
+            </h:panelGroup>
+            <h:panelGroup id="openingsPanel">
+                <h:outputLabel for="description" value="Description:" id="descriptionLabel"/>
+                <h:inputText id="description" maxlength="255"/>
+                <h:outputLabel for="openedBy" value="Opened by:" id="openedByLabel"/>
+                <h:inputText id="openedBy" maxlength="255"/>
+                <h:commandButton id="addIncident" value="Add"/>
+            </h:panelGroup>
+            <h:panelGroup id="closingsPanel">
+                <h:outputLabel for="solution" value="Solution:" id="solutionLabel"/>
+                <h:inputText id="solution" maxlength="255"/>
+                <h:outputLabel for="closedBy" value="Closed by:" id="closedByLabel"/>
+                <h:inputText id="closedBy" maxlength="255"/>
+                <h:commandButton id="closeIncident" value="Close"/>
+            </h:panelGroup>
+        
+            <h:dataTable id="incidentsTable"
+                         value=""
+                         var="incidentItem">
+                <h:column id="idColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Id"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="descriptionColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Description"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="openingDateColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Opening Date"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="openByColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Opened By"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="stateColumn">
+                    <f:facet name="header">
+                         <h:outputText value="State"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="solutionColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Solution"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="closingDateColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Closing Date"/>
+                    </f:facet>
+                </h:column>
+                <h:column id="closedByColumn">
+                    <f:facet name="header">
+                         <h:outputText value="Closed By"/>
+                    </f:facet>
+                </h:column>
+            </h:dataTable>
+        
+            <h:panelGroup id="paginationPanel">
+                <h:commandButton id="firstPage" value="First"/>
+                <h:commandButton id="previousPage" value="Prev."/>
+                <h:commandButton id="nextPage" value="Next"/>
+                <h:commandButton id="lastPage" value="Last"/>
+            </h:panelGroup>
+        
+        </h:form>  
+    </h:body>
+</html>
+

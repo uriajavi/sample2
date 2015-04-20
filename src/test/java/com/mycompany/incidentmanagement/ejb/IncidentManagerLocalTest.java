@@ -60,15 +60,15 @@ public class IncidentManagerLocalTest {
     public void initData()throws Exception{
         utx.begin();
         em.joinTransaction();
-        Query query=em.createQuery("delete from Incident");
-        query.executeUpdate();
-        utx.commit();
-        utx.begin();
-        em.joinTransaction();
     }
     @After
     public void clearData()throws Exception{
         
+        utx.commit();
+        utx.begin();
+        em.joinTransaction();
+        Query query=em.createQuery("delete from Incident");
+        query.executeUpdate();
         utx.commit();
     } 
     

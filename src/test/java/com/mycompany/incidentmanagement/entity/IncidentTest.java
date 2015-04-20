@@ -16,6 +16,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.SystemException;
+import javax.transaction.Transactional;
+import static javax.transaction.Transactional.TxType;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -64,7 +66,7 @@ public class IncidentTest {
         }else{*/
     }
     
-    private final int MAX_DATA=10;
+    private final int MAX_DATA=20;
     //injected bean for testing
     @Inject Incident incident;
     //entity manager
@@ -216,7 +218,7 @@ public class IncidentTest {
                 em.persist(inc);
             }
             utx.commit();
-            em.clear();
+            //em.clear();
         /*}catch(Exception e){
             utx.rollback();
         }*/
