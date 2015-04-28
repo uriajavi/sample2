@@ -249,7 +249,7 @@ public class IncidentsViewBeanIT {
         //checks the ids of the first's page elements
         int i=6;
         for(Incident inc:dataPage){
-            Assert.assertEquals("Last data page element id is wrong!", 
+            Assert.assertEquals("Next data page element id is wrong!", 
                                  i, inc.getId().intValue());
             i++;
         }
@@ -271,7 +271,7 @@ public class IncidentsViewBeanIT {
         //checks the ids of the first's page elements
         int i=11;
         for(Incident inc:dataPage){
-            Assert.assertEquals("Last data page element id is wrong!", 
+            Assert.assertEquals("Prev data page element id is wrong!", 
                                  i, inc.getId().intValue());
             i++;
         }
