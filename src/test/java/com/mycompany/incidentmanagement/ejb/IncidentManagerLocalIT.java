@@ -28,11 +28,11 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 
 /**
- *
+ * Integration tester for IncidentManager stateless EJB
  * @author javi
  */
 @RunWith(Arquillian.class)
-public class IncidentManagerLocalTest {
+public class IncidentManagerLocalIT {
     @Deployment
     public static WebArchive createDeployment(){
         return ShrinkWrap.create(WebArchive.class, "test.war")

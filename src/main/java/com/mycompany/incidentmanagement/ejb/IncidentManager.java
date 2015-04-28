@@ -45,7 +45,6 @@ public class IncidentManager implements IncidentManagerLocal {
     public List<Incident> getAllIncidentsList() {
         return em.createNamedQuery("findAllIncidents").getResultList();
     }
-
     /**
      * Close an open incident.
      * @param incident
@@ -63,8 +62,13 @@ public class IncidentManager implements IncidentManagerLocal {
         //sets close date and state
         incident.setCloseDate(new Date());
         incident.setState(Incident.State.CLOSED_STATE);
+        if(! em.contains(incident))incident=em.merge(incident);
     }
-
+    /**
+     * Returns a list containing incidents corresponding to passed state.
+     * @param state the state of the incidents to be obtained
+     * @return A List of Incident
+     */
     @Override
     public List<Incident> getIncidentsListByState(Incident.State state) {
         return em.createNamedQuery("findIncidentsByState")
