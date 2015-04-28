@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
  * @author javi
  */
 @RunWith(Arquillian.class)
-public class IncidentTest {
+public class IncidentIT {
     @Deployment
     public static WebArchive createDeployment(){
         return ShrinkWrap.create(WebArchive.class, "test.war")
