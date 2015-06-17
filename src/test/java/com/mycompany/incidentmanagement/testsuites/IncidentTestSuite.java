@@ -10,7 +10,7 @@ import com.mycompany.incidentmanagement.ejb.IncidentManagerLocalIT;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import com.mycompany.incidentmanagement.entity.IncidentIT;
-import com.mycompany.incidentmanagement.jsfviews.IncidentsViewTest;
+import com.mycompany.incidentmanagement.jsfviews.IncidentsViewTestIT;
 import com.mycompany.incidentmanagement.managedbeans.IncidentsViewBeanIT;
 /**
  *
@@ -20,7 +20,7 @@ import com.mycompany.incidentmanagement.managedbeans.IncidentsViewBeanIT;
 @Suite.SuiteClasses(value={IncidentIT.class,
                            IncidentManagerLocalIT.class,
                            IncidentsViewBeanIT.class,
-                           IncidentsViewTest.class})
+                           IncidentsViewTestIT.class})
 public class IncidentTestSuite {
     
 }

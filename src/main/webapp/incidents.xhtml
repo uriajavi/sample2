@@ -7,85 +7,133 @@
         <title>Facelet Title</title>
     </h:head>
     <h:body>
-        <form id="incidentsForm">
+        <h:form id="incidentsForm" prependId="false">
         <!--replaces h:form because this last tag causes an 
             UnsupportedOperation exception with JSFUnit&Arquillian test-->
             <h:panelGroup id="findIncidentsPanel">
                 <h:outputLabel for="findIncidents" value="Show:" id="findIncidentsLabel"/>
-                <h:selectOneMenu id="findIncidents">
-                    <f:selectItem itemValue="All" itemLabel="All"/>
-                    <f:selectItem itemValue="Opened" itemLabel="Opened"/>
-                    <f:selectItem itemValue="Closed" itemLabel="Closed"/>
+                <h:selectOneMenu id="findIncidents" 
+                                 value="#{incidentsViewBean.showingCriterion}">
+                    <f:selectItems value="#{incidentsViewBean.showingCriterions}" 
+                                   var="criterion"
+                                   itemValue="#{criterion}" 
+                                   itemLabel="#{criterion.label}"/>
+                    <f:ajax event="change" 
+                            execute="incidentsTable paginationPanel @this" 
+                            render="incidentsTable paginationPanel @this" 
+                            listener="#{incidentsViewBean.updateIncidents}"/>
                 </h:selectOneMenu>
             </h:panelGroup>
             <h:panelGroup id="openingsPanel">
                 <h:outputLabel for="description" value="Description:" id="descriptionLabel"/>
-                <h:inputText id="description" maxlength="255"/>
+                <h:inputText id="description" maxlength="255"
+                             value="#{incidentsViewBean.description}"/>
                 <h:outputLabel for="openedBy" value="Opened by:" id="openedByLabel"/>
-                <h:inputText id="openedBy" maxlength="255"/>
-                <h:commandButton id="addIncident" value="Add"/>
+                <h:inputText id="openedBy" maxlength="255"
+                             value="#{incidentsViewBean.openedBy}"/>
+                <h:commandButton id="addIncident" value="Add"
+                                 action="#{incidentsViewBean.addIncident}"/>
             </h:panelGroup>
             <h:panelGroup id="closingsPanel">
                 <h:outputLabel for="solution" value="Solution:" id="solutionLabel"/>
-                <h:inputText id="solution" maxlength="255"/>
+                <h:inputText id="solution" maxlength="255"
+                             value="#{incidentsViewBean.solution}"/>
                 <h:outputLabel for="closedBy" value="Closed by:" id="closedByLabel"/>
-                <h:inputText id="closedBy" maxlength="255"/>
-                <h:commandButton id="closeIncident" value="Close"/>
+                <h:inputText id="closedBy" maxlength="255"
+                             value="#{incidentsViewBean.closedBy}"/>
+                <h:commandButton id="closeIncident" value="Close"
+                                 action="#{incidentsViewBean.closeIncident}"/>
             </h:panelGroup>
         
             <h:dataTable id="incidentsTable"
-                         value=""
+                         value="#{incidentsViewBean.incidents}"
                          var="incidentItem">
+                <h:column id="checks">
+                    <h:selectBooleanCheckbox id="idCheckbox"
+                                             valueChangeListener=
+                                             "#{incidentsViewBean.changeSelectedIncident(incidentItem.id)}"/>
+                </h:column>
                 <h:column id="idColumn">
                     <f:facet name="header">
                          <h:outputText value="Id"/>
                     </f:facet>
+                    <h:outputText id="idValue" value="#{incidentItem.id}"/>
                 </h:column>
                 <h:column id="descriptionColumn">
                     <f:facet name="header">
                          <h:outputText value="Description"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.description}"/>
                 </h:column>
                 <h:column id="openingDateColumn">
                     <f:facet name="header">
                          <h:outputText value="Opening Date"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.openDate}">
+                        <f:convertDateTime type="date"/>
+                    </h:outputText>    
                 </h:column>
                 <h:column id="openByColumn">
                     <f:facet name="header">
                          <h:outputText value="Opened By"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.openedBy}"/>
                 </h:column>
                 <h:column id="stateColumn">
                     <f:facet name="header">
                          <h:outputText value="State"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.state}"/>
                 </h:column>
                 <h:column id="solutionColumn">
                     <f:facet name="header">
                          <h:outputText value="Solution"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.solution}"/>
                 </h:column>
                 <h:column id="closingDateColumn">
                     <f:facet name="header">
                          <h:outputText value="Closing Date"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.closeDate}">
+                        <f:convertDateTime type="date"/>
+                    </h:outputText>    
                 </h:column>
                 <h:column id="closedByColumn">
                     <f:facet name="header">
                          <h:outputText value="Closed By"/>
                     </f:facet>
+                    <h:outputText value="#{incidentItem.closedBy}"/>
                 </h:column>
             </h:dataTable>
         
             <h:panelGroup id="paginationPanel">
-                <h:commandButton id="firstPage" value="First"/>
-                <h:commandButton id="previousPage" value="Prev."/>
-                <h:commandButton id="nextPage" value="Next"/>
-                <h:commandButton id="lastPage" value="Last"/>
+                <h:selectOneMenu id="pageSize" 
+                                    value="#{incidentsViewBean.dataPageLength}">
+                    <f:selectItem itemValue="1" itemLabel="1"/>
+                    <f:selectItem itemValue="3" itemLabel="3"/>
+                    <f:selectItem itemValue="5" itemLabel="5"/>
+                    <f:selectItem itemValue="10" itemLabel="10"/>
+                </h:selectOneMenu>
+                <h:commandButton id="firstPage" 
+                                 value="First"
+                                 rendered="#{!incidentsViewBean.firstPage}"
+                                 action="#{incidentsViewBean.getFirstPage}"/>
+                <h:commandButton id="previousPage" 
+                                 value="Prev."
+                                 rendered="#{!incidentsViewBean.firstPage}"
+                                 action="#{incidentsViewBean.getPrevPage}"/>
+                <h:commandButton id="nextPage" 
+                                 value="Next"
+                                 rendered="#{!incidentsViewBean.lastPage}"
+                                 action="#{incidentsViewBean.getNextPage}"/>
+                <h:commandButton id="lastPage" 
+                                 value="Last"
+                                 rendered="#{!incidentsViewBean.lastPage}"
+                                 action="#{incidentsViewBean.getLastPage}"/>
             </h:panelGroup>
         
-        </form>  
+        </h:form>  
     </h:body>
 </html>
 

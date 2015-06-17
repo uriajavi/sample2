@@ -12,4 +12,8 @@
             <!--property name="sunResourcesXml">src/main/webapp/WEB-INF/glassfish-web.xml</property--> 
         </configuration>
     </container>
+    
+    <extension qualifier="webdriver">
+        <property name="browser">${browser}</property>
+    </extension>
 </arquillian>

@@ -277,4 +277,25 @@ public class IncidentsViewBeanIT {
         }
     }
     
+    @Test
+    public void testIsLastPage(){
+        //sets the data selection criterion
+        bean.setShowingCriterion(IncidentsViewBean.Criterion.ALL);
+        //sets the number of data elements for page
+        bean.setDataPageLength(new Short("20"));
+        bean.getIncidents();
+        Assert.assertTrue("Page is not last page!", 
+                          bean.isLastPage());        
+    }
+    
+    @Test
+    public void testIsFirstPage(){
+        //sets the data selection criterion
+        bean.setShowingCriterion(IncidentsViewBean.Criterion.ALL);
+        //sets the number of data elements for page
+        bean.setDataPageLength(new Short("20"));
+        bean.getIncidents();
+        Assert.assertTrue("Page is not last page!", 
+                          bean.isFirstPage());        
+    }
 }

@@ -9,6 +9,7 @@ import com.mycompany.incidentmanagement.entity.Incident;
 import com.mycompany.incidentmanagement.exception.IncidentDataException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +20,9 @@ import javax.persistence.PersistenceContext;
  */
 @Stateless
 public class IncidentManager implements IncidentManagerLocal {
+    //logger for the class
+    private static final Logger logger =
+            Logger.getLogger("com.mycompany.incidentmanagement.ejb.IncidentsManager");
     @PersistenceContext
     private EntityManager em;
     /**
@@ -29,11 +33,14 @@ public class IncidentManager implements IncidentManagerLocal {
      */
     @Override
     public void createIncident(Incident incident)throws IncidentDataException{
+        logger.info("IncidentsManager: creating incident.");
         //validates data before inserting
         if(incident.getDescription()== null || incident.getDescription().equals("")||
            incident.getOpenDate()==null || 
-           incident.getOpenedBy()==null || incident.getOpenedBy().equals(""))
+           incident.getOpenedBy()==null || incident.getOpenedBy().equals("")){
+            logger.severe("IncidentsManager: IncidentDataException creating incident.");
             throw new IncidentDataException("Incident not completely informed before insert.");
+        }
         //persists incident
         em.persist(incident);
     }
@@ -43,6 +50,7 @@ public class IncidentManager implements IncidentManagerLocal {
      */
     @Override
     public List<Incident> getAllIncidentsList() {
+        logger.info("IncidentsManager: getting all incidents.");
         return em.createNamedQuery("findAllIncidents").getResultList();
     }
     /**
@@ -52,13 +60,16 @@ public class IncidentManager implements IncidentManagerLocal {
      */
     @Override
     public void closeIncident(Incident incident) throws IncidentDataException {
+        logger.info("IncidentsManager: closing incident.");
         //validates data before incident closing
         if(incident.getDescription()== null || incident.getDescription().equals("")||
            incident.getOpenDate()==null || 
            incident.getOpenedBy()==null || incident.getOpenedBy().equals("")||
            incident.getClosedBy()==null || incident.getClosedBy().equals("")||
-           incident.getSolution()==null || incident.getSolution().equals(""))
+           incident.getSolution()==null || incident.getSolution().equals("")){
+            logger.severe("IncidentsManager: IncidentDataException closing incident.");
             throw new IncidentDataException("Incident not completely informed before closing.");
+        }
         //sets close date and state
         incident.setCloseDate(new Date());
         incident.setState(Incident.State.CLOSED_STATE);
@@ -71,6 +82,7 @@ public class IncidentManager implements IncidentManagerLocal {
      */
     @Override
     public List<Incident> getIncidentsListByState(Incident.State state) {
+        logger.info("IncidentsManager: getting incidents by state.");
         return em.createNamedQuery("findIncidentsByState")
                 .setParameter("state", state).getResultList();
     }
