@@ -204,8 +204,9 @@ public class IncidentsViewBeanIT {
         //sets the number of data elements for page
         bean.setDataPageLength(new Short("5"));
         bean.getIncidents();
-        //gets the last page
-        Collection<Incident> dataPage=bean.getFirstPage();
+        //gets the first page
+        bean.getFirstPage();
+        Collection<Incident> dataPage=bean.getIncidents();
         //checks the ids of the first's page elements
         int i=1;
         for(Incident inc:dataPage){
@@ -225,8 +226,9 @@ public class IncidentsViewBeanIT {
         bean.setDataPageLength(new Short("5"));
         bean.getIncidents();
         //gets the first page
-        Collection<Incident> dataPage=bean.getLastPage();
-        //checks the ids of the first's page elements
+        bean.getLastPage();
+        Collection<Incident> dataPage=bean.getIncidents();
+         //checks the ids of the first's page elements
         int i=16;
         for(Incident inc:dataPage){
             Assert.assertEquals("Last data page element id is wrong!", 
@@ -245,7 +247,8 @@ public class IncidentsViewBeanIT {
         bean.setDataPageLength(new Short("5"));
         bean.getIncidents();
         //gets the next page
-        Collection<Incident> dataPage=bean.getNextPage();
+        bean.getNextPage();
+        Collection<Incident> dataPage=bean.getIncidents();
         //checks the ids of the first's page elements
         int i=6;
         for(Incident inc:dataPage){
@@ -267,7 +270,8 @@ public class IncidentsViewBeanIT {
         //gets the last page
         bean.getLastPage();
         //gets the previous page
-        Collection<Incident> dataPage=bean.getPrevPage();
+        bean.getPrevPage();
+        Collection<Incident> dataPage=bean.getIncidents();
         //checks the ids of the first's page elements
         int i=11;
         for(Incident inc:dataPage){

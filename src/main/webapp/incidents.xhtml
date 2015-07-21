@@ -4,136 +4,244 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Incidents Management</title>
+        <!-- Bootstrap head elements-->
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+        <!--link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!--script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script-->
+        <h:outputScript library="js" name="bootstrap.min.js"/>
+        <!--end bootstrap-->
     </h:head>
     <h:body>
+        <h:panelGroup styleClass="container-fluid" layout="block">
+            <div class="jumbotron" style="color: #23527c;">
+            <h1>Incidents Management Application</h1>      
+            <p>Here you can see, add, and close all kind of incidents...</p>      
+        </div>    
+        <!--div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> 
+                 <strong>Error!</strong><h:messages layout="table" styleClass="alert alert-danger"/>
+        </div-->
+        <!-- Modal -->
+        <script>
+        $(document).ready(function(){
+            if ($("table[id=errorMessages]").length!=0)
+                $("#myModal").modal();
+        });
+        </script>
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content ">
+              <div class="modal-header alert alert-danger">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Error</h4>
+              </div>
+              <div class="modal-body">
+                  <h:messages id="errorMessages" layout="table" style="color: #A94442"/>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+
+          </div>
+        </div>    
         <h:form id="incidentsForm" prependId="false">
         <!--replaces h:form because this last tag causes an 
             UnsupportedOperation exception with JSFUnit&Arquillian test-->
-            <h:panelGroup id="findIncidentsPanel">
-                <h:outputLabel for="findIncidents" value="Show:" id="findIncidentsLabel"/>
-                <h:selectOneMenu id="findIncidents" 
-                                 value="#{incidentsViewBean.showingCriterion}">
-                    <f:selectItems value="#{incidentsViewBean.showingCriterions}" 
-                                   var="criterion"
-                                   itemValue="#{criterion}" 
-                                   itemLabel="#{criterion.label}"/>
-                    <f:ajax event="change" 
-                            execute="incidentsTable paginationPanel @this" 
-                            render="incidentsTable paginationPanel @this" 
-                            listener="#{incidentsViewBean.updateIncidents}"/>
-                </h:selectOneMenu>
+        <!-- Begin incidents list panel-->
+        <div class="row">
+            <h:panelGroup id="findIncidentsPanel" 
+                          styleClass="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+                          layout="block">
+                <div class="panel panel-primary">  
+                    <div class="panel-heading ">Show incidents by state</div>
+                    <div class="panel-body table-responsive">
+                        <h:outputLabel for="findIncidents" value="Select state" id="findIncidentsLabel"/>
+                        <h:selectOneMenu id="findIncidents" 
+                                         value="#{incidentsViewBean.showingCriterion}"
+                                         styleClass="">
+                            <f:selectItems value="#{incidentsViewBean.showingCriterions}" 
+                                           var="criterion"
+                                           itemValue="#{criterion}" 
+                                           itemLabel="#{criterion.label}"/>
+                            <f:ajax event="change" 
+                                    execute="incidentsTable paginationPanel @this" 
+                                    render="incidentsTable paginationPanel @this" 
+                                    listener="#{incidentsViewBean.updateIncidents}"/>
+                        </h:selectOneMenu>
+                        <h:selectOneMenu id="pageSize" 
+                                         value="#{incidentsViewBean.dataPageLength}"
+                                         style="float: right">
+                                <f:selectItem itemValue="1" itemLabel="1"/>
+                                <f:selectItem itemValue="3" itemLabel="3"/>
+                                <f:selectItem itemValue="5" itemLabel="5"/>
+                                <f:selectItem itemValue="10" itemLabel="10"/>
+                            <f:ajax event="change" 
+                                    execute="incidentsTable paginationPanel @this" 
+                                    render="incidentsTable paginationPanel @this" 
+                                    listener="#{incidentsViewBean.updateIncidents}"/>
+                        </h:selectOneMenu>
+                        <h:outputLabel for="pageSize" value="Select lines per page" 
+                                       id="pageSizeLabel" style="float: right"/>
+                        
+                        <h:dataTable id="incidentsTable"
+                                     styleClass="table table-striped table-hover
+                                                 "
+                                    value="#{incidentsViewBean.incidents}"
+                                    var="incidentItem">
+                            <h:column id="checks">
+                                <h:selectBooleanCheckbox id="idCheckbox"
+                                                         valueChangeListener=
+                                                         "#{incidentsViewBean.changeSelectedIncident}">
+                                    <f:attribute name="idValue" value="#{incidentItem.id}"/>
+                                </h:selectBooleanCheckbox>    
+                            </h:column>
+                            <h:column id="idColumn">
+                                <f:facet name="header">
+                                     <h:outputText value="Id"/>
+                                </f:facet>
+                                <h:outputText id="idValue" value="#{incidentItem.id}"/>
+                            </h:column>
+                            <h:column id="descriptionColumn">
+                                <f:facet name="header">
+                                     <h:outputText value="Description"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.description}"/>
+                            </h:column>
+                            <h:column id="openingDateColumn">
+                                <f:facet name="header">
+                                     <h:outputText value="Opening Date"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.openDate}">
+                                    <f:convertDateTime type="date"/>
+                                </h:outputText>    
+                            </h:column>
+                            <h:column id="openByColumn">
+                                <f:facet name="header">
+                                     <h:outputText value="Opened By"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.openedBy}"/>
+                            </h:column>
+                            <h:column id="stateColumn"
+                                      rendered="#{incidentsViewBean.showingCriterion == 'ALL'}">
+                                <f:facet name="header">
+                                     <h:outputText value="State"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.state}"/>
+                            </h:column>
+                            <h:column id="solutionColumn" 
+                                      rendered="#{incidentsViewBean.showingCriterion != 'OPENED' }">
+                                <f:facet name="header">
+                                     <h:outputText value="Solution"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.solution}"/>
+                            </h:column>
+                            <h:column id="closingDateColumn"
+                                      rendered="#{incidentsViewBean.showingCriterion != 'OPENED' }">
+                                <f:facet name="header">
+                                     <h:outputText value="Closing Date"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.closeDate}">
+                                    <f:convertDateTime type="date"/>
+                                </h:outputText>    
+                            </h:column>
+                            <h:column id="closedByColumn"
+                                      rendered="#{incidentsViewBean.showingCriterion != 'OPENED' }">
+                                <f:facet name="header">
+                                     <h:outputText value="Closed By"/>
+                                </f:facet>
+                                <h:outputText value="#{incidentItem.closedBy}"/>
+                            </h:column>
+                        </h:dataTable>
+                            
+                        <h:panelGroup id="paginationPanel" layout="block">
+                            <ul class="pager">
+                                <li>
+                                    <h:commandLink id="firstPage" 
+                                             value="First"
+                                             rendered="#{!incidentsViewBean.firstPage}"
+                                             action="#{incidentsViewBean.getFirstPage}"/>
+                                </li>
+                                <li>
+                                    <h:commandLink id="previousPage" 
+                                             value="Prev."
+                                             rendered="#{!incidentsViewBean.firstPage}"
+                                             action="#{incidentsViewBean.getPrevPage}"/>
+                                </li>
+                                <li>             
+                                    <h:commandLink id="nextPage" 
+                                             value="Next"
+                                             rendered="#{!incidentsViewBean.lastPage}"
+                                             action="#{incidentsViewBean.getNextPage}"/>
+                                </li>
+                                <li>    
+                                    <h:commandLink id="lastPage" 
+                                             value="Last"
+                                             rendered="#{!incidentsViewBean.lastPage}"
+                                             action="#{incidentsViewBean.getLastPage}"/>
+                                </li>
+                              </ul>
+                        </h:panelGroup>
+                    </div>
+                </div>    
             </h:panelGroup>
-            <h:panelGroup id="openingsPanel">
-                <h:outputLabel for="description" value="Description:" id="descriptionLabel"/>
-                <h:inputText id="description" maxlength="255"
-                             value="#{incidentsViewBean.description}"/>
-                <h:outputLabel for="openedBy" value="Opened by:" id="openedByLabel"/>
-                <h:inputText id="openedBy" maxlength="255"
-                             value="#{incidentsViewBean.openedBy}"/>
-                <h:commandButton id="addIncident" value="Add"
-                                 action="#{incidentsViewBean.addIncident}"/>
+        </div>    
+        <!-- End incidents list panel-->
+        <!-- Begin incidents opening and closing panels-->
+        <div class="row">
+            <h:panelGroup id="openingsPanel" layout="block"
+                          styleClass="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div class="panel panel-danger">  
+                    <div class="panel-heading ">Open an incident</div>
+                    <div class="panel-body">
+                        <h:outputLabel for="description" value="Description:" 
+                                       id="descriptionLabel"
+                                       />
+                        <h:inputTextarea id="description" cols="50" rows="5"
+                                     value="#{incidentsViewBean.description}"
+                                     styleClass="form-control"/>
+                        <h:outputLabel for="openedBy" value="Opened by:" id="openedByLabel"/>
+                        <h:inputText id="openedBy" maxlength="255"
+                                     value="#{incidentsViewBean.openedBy}"
+                                     styleClass="form-control"/>
+                        <h:commandButton id="addIncident" value="Open"
+                                         action="#{incidentsViewBean.addIncident}"
+                                         styleClass="btn btn-danger form-control"
+                                         style="margin-top: 10px"/>
+                    </div>
+                </div>    
             </h:panelGroup>
-            <h:panelGroup id="closingsPanel">
-                <h:outputLabel for="solution" value="Solution:" id="solutionLabel"/>
-                <h:inputText id="solution" maxlength="255"
-                             value="#{incidentsViewBean.solution}"/>
-                <h:outputLabel for="closedBy" value="Closed by:" id="closedByLabel"/>
-                <h:inputText id="closedBy" maxlength="255"
-                             value="#{incidentsViewBean.closedBy}"/>
-                <h:commandButton id="closeIncident" value="Close"
-                                 action="#{incidentsViewBean.closeIncident}"/>
+            <h:panelGroup id="closingsPanel" layout="block"
+                          styleClass="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div class="panel panel-success">  
+                    <div class="panel-heading ">Close an incident</div>
+                    <div class="panel-body">
+                        <h:outputLabel for="solution" value="Solution:" id="solutionLabel"/>
+                        <h:inputTextarea id="solution" rows="5" cols="50"
+                                     value="#{incidentsViewBean.solution}"
+                                     styleClass="form-control"/>
+                        <h:outputLabel for="closedBy" value="Closed by:" id="closedByLabel"/>
+                        <h:inputText id="closedBy" maxlength="255"
+                                     value="#{incidentsViewBean.closedBy}"
+                                     styleClass="form-control"/>
+                        <h:commandButton id="closeIncident" value="Close"
+                                         action="#{incidentsViewBean.closeIncident}"
+                                         styleClass="btn btn-success form-control"
+                                         style="margin-top: 10px"/>
+                    </div>
+                </div>    
             </h:panelGroup>
-        
-            <h:dataTable id="incidentsTable"
-                         value="#{incidentsViewBean.incidents}"
-                         var="incidentItem">
-                <h:column id="checks">
-                    <h:selectBooleanCheckbox id="idCheckbox"
-                                             valueChangeListener=
-                                             "#{incidentsViewBean.changeSelectedIncident(incidentItem.id)}"/>
-                </h:column>
-                <h:column id="idColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Id"/>
-                    </f:facet>
-                    <h:outputText id="idValue" value="#{incidentItem.id}"/>
-                </h:column>
-                <h:column id="descriptionColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Description"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.description}"/>
-                </h:column>
-                <h:column id="openingDateColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Opening Date"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.openDate}">
-                        <f:convertDateTime type="date"/>
-                    </h:outputText>    
-                </h:column>
-                <h:column id="openByColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Opened By"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.openedBy}"/>
-                </h:column>
-                <h:column id="stateColumn">
-                    <f:facet name="header">
-                         <h:outputText value="State"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.state}"/>
-                </h:column>
-                <h:column id="solutionColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Solution"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.solution}"/>
-                </h:column>
-                <h:column id="closingDateColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Closing Date"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.closeDate}">
-                        <f:convertDateTime type="date"/>
-                    </h:outputText>    
-                </h:column>
-                <h:column id="closedByColumn">
-                    <f:facet name="header">
-                         <h:outputText value="Closed By"/>
-                    </f:facet>
-                    <h:outputText value="#{incidentItem.closedBy}"/>
-                </h:column>
-            </h:dataTable>
-        
-            <h:panelGroup id="paginationPanel">
-                <h:selectOneMenu id="pageSize" 
-                                    value="#{incidentsViewBean.dataPageLength}">
-                    <f:selectItem itemValue="1" itemLabel="1"/>
-                    <f:selectItem itemValue="3" itemLabel="3"/>
-                    <f:selectItem itemValue="5" itemLabel="5"/>
-                    <f:selectItem itemValue="10" itemLabel="10"/>
-                </h:selectOneMenu>
-                <h:commandButton id="firstPage" 
-                                 value="First"
-                                 rendered="#{!incidentsViewBean.firstPage}"
-                                 action="#{incidentsViewBean.getFirstPage}"/>
-                <h:commandButton id="previousPage" 
-                                 value="Prev."
-                                 rendered="#{!incidentsViewBean.firstPage}"
-                                 action="#{incidentsViewBean.getPrevPage}"/>
-                <h:commandButton id="nextPage" 
-                                 value="Next"
-                                 rendered="#{!incidentsViewBean.lastPage}"
-                                 action="#{incidentsViewBean.getNextPage}"/>
-                <h:commandButton id="lastPage" 
-                                 value="Last"
-                                 rendered="#{!incidentsViewBean.lastPage}"
-                                 action="#{incidentsViewBean.getLastPage}"/>
-            </h:panelGroup>
-        
-        </h:form>  
+        </div>
+        <!-- End incidents opening and closing panels-->
+                        
+        </h:form>
+      </h:panelGroup>
     </h:body>
 </html>
 

@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UISelectBoolean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
@@ -154,6 +156,8 @@ public class IncidentsViewBean implements Serializable {
         Incident incident=new Incident(this.description,this.openedBy);
         try{
             ejb.createIncident(incident);
+            this.description="";
+            this.openedBy="";
         }catch(Exception e){
             logger.log(Level.SEVERE, "IncidentsViewBean:{0}", e.getMessage());
             FacesContext.getCurrentInstance()
@@ -181,40 +185,47 @@ public class IncidentsViewBean implements Serializable {
             incident.setClosedBy(this.closedBy);
             incident.setSolution(this.solution);
             ejb.closeIncident(incident);
+            this.solution="";
+            this.closedBy="";
         }catch(Exception e){
             logger.log(Level.SEVERE, "IncidentsViewBean:{0}", e.getMessage());
             FacesContext.getCurrentInstance()
                 .addMessage("closingsPanel", new FacesMessage(e.getMessage()));
         }
+        this.updateIncidents();
         return "";
     }
     /**
      * Gets the first page of data for the incidents table.
-     * @return A collection of Incidents containing the data.
+     * @return the following page to be shown
      */
-    public Collection<Incident> getFirstPage() {
-        return this.pager.getFirstPage();
+    public String getFirstPage() {
+        this.pager.getFirstPage();
+        return "";
     }
     /**
      * Gets the last page of data for the incidents table.
-     * @return A collection of Incidents containing the data.
+     * @return the following page to be shown.
      */
-    public Collection<Incident> getLastPage() {
-        return this.pager.getLastPage();
+    public String getLastPage() {
+        this.pager.getLastPage();
+        return "";
     }
     /**
      * Gets the next page of data for the incidents table.
-     * @return A collection of Incidents containing the data.
+     * @return the following page to be shown.
      */
-    public Collection<Incident> getNextPage() {
-        return this.pager.getNextPage();
+    public String getNextPage() {
+        this.pager.getNextPage();
+        return "";
     }
     /**
      * Gets the previous page of data for the incidents table.
-     * @return A collection of Incidents containing the data.
+     * @return the following page to be shown
      */
-    public Collection<Incident> getPrevPage() {
-        return this.pager.getPrevPage();
+    public String getPrevPage() {
+        this.pager.getPrevPage();
+        return "";
     }
     /** 
      * Checks if the actual page is the last one.
@@ -230,7 +241,9 @@ public class IncidentsViewBean implements Serializable {
     public boolean isFirstPage() {
         return this.pager.isFirstPage();
     }
-    
+    /**
+     * Updates the incidents data shown in the table
+     */
     public void updateIncidents(){
         logger.info("IncidentsViewBean: getting incidents.");
         logger.log(Level.FINE, "showingCriterion={0}", showingCriterion);
@@ -249,9 +262,16 @@ public class IncidentsViewBean implements Serializable {
         //updates data for the pager
         this.pager.actualizar(incidents);
     }
-    
-    public void changeSelectedIncident(String id){
-        this.selectedIncident=Integer.parseInt(id);
+    /**
+     * Event listener for ValueChange on table rows selection checkboxes
+     * @param event ValueChangeEvent fired
+     */
+    public void changeSelectedIncident(ValueChangeEvent event){
+        //if the row is selected, stores the id of the incident selected that is 
+        //read from an attribute called idValue
+        if(event.getNewValue().equals(true))
+            this.selectedIncident=
+                    Integer.parseInt(event.getComponent().getAttributes().get("idValue").toString());
         
     }
 }

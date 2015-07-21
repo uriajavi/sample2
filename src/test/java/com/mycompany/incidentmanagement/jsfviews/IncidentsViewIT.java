@@ -57,6 +57,8 @@ public class IncidentsViewIT {
                 .addClass(useraccess.util.ListPager.class)
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsResource("META-INF/persistence.xml")
+                .addAsWebResource(new File("src/main/webapp/resources/css/bootstrap.min.css"))
+                .addAsWebResource(new File("src/main/webapp/resources/js/bootstrap.min.js"))
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/faces-config.xml"))
                 .addAsWebResource(new File("src/main/webapp/incidents.xhtml"));
 
@@ -134,6 +136,9 @@ public class IncidentsViewIT {
     @RunAsClient
     public void testOpenIncident(){
         int newIncidentsCount=10;
+        //sets page size
+        //Select pageSizeCombo=new Select(pageSize);
+        //guardAjax(pageSizeCombo).selectByValue("10");
         Select incidentsCombo=new Select(findIncidents);
         guardAjax(incidentsCombo).selectByValue("OPENED");
         for (int i=1;i<=newIncidentsCount;i++){
@@ -154,6 +159,9 @@ public class IncidentsViewIT {
     @InSequence(3)
     @RunAsClient
     public void testCloseIncident(){
+        //sets page size
+        //Select pageSizeCombo=new Select(pageSize);
+        //guardAjax(pageSizeCombo).selectByValue("10");
         //gets opened incidents
         Select incidentsCombo=new Select(findIncidents);
         guardAjax(incidentsCombo).selectByValue("CLOSED");
@@ -189,7 +197,7 @@ public class IncidentsViewIT {
     public void testFirstPageHasNotFirstPageButton(){
         //sets page size
         Select pageSizeCombo=new Select(pageSize);
-        pageSizeCombo.selectByValue("3");
+        guardAjax(pageSizeCombo).selectByValue("3");
         //shows all incidents
         Select incidentsCombo=new Select(findIncidents);
         guardAjax(incidentsCombo).selectByValue("ALL");
